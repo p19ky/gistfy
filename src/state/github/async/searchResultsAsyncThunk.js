@@ -1,11 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { octokit } from '../../../utils/helpers';
+import { updateLatestSearch } from '../githubSlice';
 
 const searchResultsAsyncThunk = createAsyncThunk(
   'github/searchResults',
-  async ({ query }, { rejectWithValue, fulfillWithValue }) => {
+  async ({ query }, { rejectWithValue, fulfillWithValue, dispatch }) => {
     try {
+      dispatch(updateLatestSearch(query))
+
       if (!query) return fulfillWithValue([]);
 
       const response = await octokit.request('GET /search/users', {

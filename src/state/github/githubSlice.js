@@ -1,14 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { reducers as searchResultsAsyncThunkReducers } from './async/searchResultsAsyncThunk';
+import { reducers as currentUserAsyncThunkReducers } from './async/currentUserAsyncThunk';
 
 const initialState = {
   value: {
     currentUser: null,
     searchResults: [],
+    latestSearch: ""
   },
   errorSearchResults: null,
   loadingSearchResults: false,
+  errorCurrentUser: null,
+  loadingCurrentUser: false,
 };
 
 export const githubSlice = createSlice({
@@ -21,17 +25,17 @@ export const githubSlice = createSlice({
     updateSearchResults: (state, { payload }) => {
       state.value.searchResults = payload;
     },
-    resetGithubValue: state => {
-      state.value = initialState;
+    updateLatestSearch: (state, { payload }) => {
+      state.value.latestSearch = payload;
     },
   },
   extraReducers: {
-    ...searchResultsAsyncThunkReducers
+    ...searchResultsAsyncThunkReducers,
+    ...currentUserAsyncThunkReducers,
   },
 });
 
 // export state reducers
-export const { updateCurrentUser, updateSearchResults, resetGithubValue } =
-  githubSlice.actions;
+export const { updateCurrentUser, updateSearchResults, updateLatestSearch } = githubSlice.actions;
 
 export default githubSlice.reducer;

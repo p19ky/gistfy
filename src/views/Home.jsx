@@ -23,15 +23,15 @@ const Home = () => {
       <VStack spacing={8} flex={1}>
         <Logo h="20vmin" pointerEvents="none" />
         <Search />
+        {searchResultsLoading && <Spinner justifySelf="center" />}
         <Container
           as={Grid}
           maxW="container.lg"
           gridTemplateColumns="repeat(auto-fit, minmax(256px, 1fr))"
           gridGap={4}
         >
-          {searchResultsLoading && <Spinner justifySelf="center" />}
           {React.Children.toArray(
-            searchResults.map(result => <UserCard image={result.avatar_url} username={result.login} />)
+            searchResults.map(user => <UserCard user={user} />)
           )}
         </Container>
       </VStack>

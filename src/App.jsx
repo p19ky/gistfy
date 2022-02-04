@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import GlobalLoading from './components/GlobalLoading';
 
 const Home = React.lazy(() => import('./views/Home'));
+const User = React.lazy(() => import('./views/User'));
 const PageNotFound = React.lazy(() => import('./views/PageNotFound'));
 
 const App = () => {
@@ -22,7 +23,7 @@ const App = () => {
         path="/user/:username"
         element={
           <React.Suspense fallback={<GlobalLoading />}>
-            <Home />
+            <User />
           </React.Suspense>
         }
       />

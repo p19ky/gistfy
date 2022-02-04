@@ -10,4 +10,4 @@ export function debounce(func, timeout = 300) {
   };
 }
 
-export const octokit = new Octokit({ auth: process.env.REACT_APP_OCTOKIT_ACCESS_TOKEN_FROM_GITHUB });
+export const octokit = new Octokit();
