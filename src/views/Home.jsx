@@ -13,10 +13,6 @@ const Home = () => {
     state => state.github.loadingSearchResults
   );
 
-  React.useEffect(() => {
-    console.log(searchResults);
-  }, [searchResults]);
-
   return (
     <Flex flex={1} direction="column" minH="100vh" p={2}>
       <ColorModeSwitcher alignSelf="flex-end" />

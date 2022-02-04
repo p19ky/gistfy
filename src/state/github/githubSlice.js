@@ -21,6 +21,8 @@ export const githubSlice = createSlice({
   reducers: {
     updateCurrentUser: (state, { payload }) => {
       state.value.currentUser = payload;
+      state.errorCurrentUser = null;
+      state.loadingCurrentUser = false;
     },
     updateSearchResults: (state, { payload }) => {
       state.value.searchResults = payload;
