@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as ReactRouterLink, useParams } from 'react-router-dom';
 import {
+  Avatar,
   Badge,
   Button,
   Code,
@@ -22,6 +23,8 @@ import {
   Text,
   useDisclosure,
   VStack,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 
 import { currentUserAsyncThunk } from '../state/github/async/currentUserAsyncThunk';
@@ -56,6 +59,7 @@ const User = () => {
     React.useState('');
   const [fileViewMode, setFileViewMode] = React.useState(false);
   const [currentBadges, setCurrentBadges] = React.useState([]);
+  const [currentLatestForks, setCurrentLatestForks] = React.useState([]);
   const {
     isOpen: isOpenGistModal,
     onOpen: onOpenGistModal,
@@ -100,10 +104,13 @@ const User = () => {
   }, [currentUser]);
 
   const handleOpenGist = gist => {
-    console.log(gist);
     setCurrentOpenGist(gist);
     onOpenGistModal();
+    handleCreateBadges(gist);
+    handleGetLatestForks(gist);
+  };
 
+  const handleCreateBadges = gist => {
     const setOfFileTypes = Array.from(
       new Set(Object.values(gist.files).map(f => f.type))
     );
@@ -111,8 +118,6 @@ const User = () => {
     const randomUniqueColours = BADGE_COLOR_SCHEMES.sort(
       () => 0.5 - Math.random()
     ).slice(0, setOfFileTypes.length);
-
-    console.log(randomUniqueColours);
 
     setCurrentBadges(
       setOfFileTypes.map((ft, i) => ({
@@ -122,11 +127,26 @@ const User = () => {
     );
   };
 
+  const handleGetLatestForks = async gist => {
+    try {
+      const response = await axios.get(gist.forks_url);
+      const forks = response.data;
+      const sortedForks = forks.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+
+      setCurrentLatestForks(sortedForks.slice(0, 3));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleCloseGistModal = () => {
     onCloseGistModal();
     setCurrentOpenGist(null);
     setFileViewMode(false);
     setCurrentBadges([]);
+    setCurrentLatestForks([]);
   };
 
   const handleCloseViewRaw = () => {
@@ -217,13 +237,32 @@ const User = () => {
               </Flex>
             ) : (
               <ModalBody>
-                <Flex wrap={'wrap'} mb={4}>
+                <Wrap wrap={'wrap'} mb={4}>
                   {React.Children.toArray(
                     currentBadges.map(b => (
-                      <Badge mr={2} colorScheme={b.colorScheme}>{b.fileType}</Badge>
+                      <WrapItem>
+                        <Badge colorScheme={b.colorScheme}>{b.fileType}</Badge>
+                      </WrapItem>
                     ))
                   )}
-                </Flex>
+                </Wrap>
+                {!!currentLatestForks.length && (
+                  <HStack>
+                    <Text fontWeight={'bold'}>Latest forkers: </Text>
+                    <Wrap wrap={'wrap'} mb={4}>
+                      {React.Children.toArray(
+                        currentLatestForks.map(fork => (
+                          <WrapItem>
+                            <Avatar
+                              name={fork.owner.login}
+                              src={fork.owner.avatar_url}
+                            />
+                          </WrapItem>
+                        ))
+                      )}
+                    </Wrap>
+                  </HStack>
+                )}
                 {React.Children.toArray(
                   Object.entries(currentOpenGist.files).map(file => {
                     return (
